@@ -23,13 +23,13 @@ function out = comphist(image, xsize, ysize, s, ref, ref2)
     dims = size(image);
     out = zeros(dims(1), dims(2));
     nums = zeros(dims(1),dims(2));
-    %window starts at 1 and ends at the end minus XSIZE. step size is s
-    for x1 = 1:s:(dims(1) - xsize)
-        %window starts at 1 and ends at end minus YSIZE. step size is s
-        for y1 = 1:s:(dims(2) - ysize)
-            %calculate x and y ends of window
-            x2 = x1 + xsize;
-            y2 = y1 + ysize;
+    %window starts at 1 and ends when window reaches bottom if image
+    for x1 = 1:s:(dims(1) - xsize + 1)
+        %window starts at 1 and ends when window reaches right of image
+        for y1 = 1:s:(dims(2) - ysize + 1)
+            %calculate x and y ends of window. 4 wide means add 3 etc
+            x2 = x1 + (xsize - 1);
+            y2 = y1 + (ysize - 1);
             %calculate 3d hsv histogram for this window
             data = hist3dhsv(double(image(x1:x2,y1:y2,:)) / 255);
             %calculate squared difference of REF from window
@@ -48,6 +48,8 @@ function out = comphist(image, xsize, ysize, s, ref, ref2)
     end
         %normalize score using number of windows for each pixel
         out = out ./ nums;
+        %normalize so that largest value is 1.
+        out = out ./ max(max([out(:) -out(:)]))
         %no windows results in nan. Set these far below 0 threshold.
-        out(isnan(out)) = -1e3;
+        out(isnan(out)) = -1;
 end

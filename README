@@ -1,0 +1,30 @@
+USAGE:
+
+
+### Using the existing training set ###
+1.Navigate to this directory in Matlab.
+2.Run init, which will load in all images (s1-s20), masks (bw1-bw20), masked images(masked1-masked20),
+	images minus masked portions (notmasked1-notmasked20), and compute the 3D histograms for target
+	pixels (hist1) and non-target pixels(hist2)
+3. Call comphist(<IMNAME>, <X>, <Y>, <S>, hist1, hist2), where <IMNAME> is any matlab image (e.g. one of s1-s20),
+	<X> is the desired sliding window width, <Y> is the desired sliding window height, and S is the resolution
+	in the window sliding amount in pixels. Assign the result to a variable.
+	e.g. "res = comphist(s1, 4, 4, 2, hist1, hist2)"
+4. Display the result with imshow.
+
+
+### Make your own training sets ###
+1. Do one of the following:
+	1a. Create a new folder with a subfolder called "train", and copy all four .m files from this project into the former.
+	1b. Delete or move all images in the "train" folder so that the train folder is empty
+2. Collect a set of training images containing your objects of interest. Place them in the training folder and name
+	them, in any order, "s1.jpg", "s2.jpg", "s3.jpg", etc. The numbering must start at 1 and must be continuous
+	(e.g. you can't skip s2.jpg and just have s1.jpg and s3.jpg)
+3. For every image "s<i>.jpg", where i is the index, run the following line:
+	imwrite(roipoly(imread('train/s<i>.jpg')), 'train/s<i>mask.png')
+
+	Every time you run this, the image will be loaded and you will be asked to draw a polygon around the object
+	of interest in your photo. Select the points of the polygon by clicking, and close the polygon by double clicking
+	anywhere or clicking on the first point. Double click the finished polygon to confirm. This creates a mask
+	for this image with name "s<i>mask.png" in the training folder.
+4. Go to step 2 in the existing training set section above. 
